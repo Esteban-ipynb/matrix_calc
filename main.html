@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Free Matrix Calculator - Add, Multiply, Inverse, Determinant & More</title>
+    <meta name="description" content="Free online matrix calculator for all operations: addition, multiplication, inverse, determinant, transpose, RREF, eigenvalues. Supports matrices up to 10x10. Fast and easy to use.">
+    <meta name="keywords" content="matrix calculator, matrix multiplication, inverse matrix, determinant calculator, transpose matrix, RREF calculator, eigenvalues, linear algebra calculator">
+    <meta name="author" content="Matrix Calculator">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags (for social sharing) -->
+    <meta property="og:title" content="Free Matrix Calculator - Online Linear Algebra Tool">
+    <meta property="og:description" content="Calculate matrix operations instantly. Add, multiply, find inverse, determinant, transpose, and more. Free and easy to use.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yoursite.com">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Free Matrix Calculator">
+    <meta name="twitter:description" content="Calculate matrix operations instantly. Free online linear algebra calculator.">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Courier New", monospace;
+            background-color: #c0c0c0;
+            margin: 0;
+            padding: 20px;
+            color: #000;
+        }
+        
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            grid-template-rows: auto auto;
+            gap: 20px;
+        }
+        
+        .main-content {
+            grid-column: 1;
+            grid-row: 1;
+            background-color: #fff;
+            border: 3px outset #fff;
+            padding: 20px;
+        }
+        
+        .ad-sidebar {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        .footer {
+            grid-column: 1 / 3;
+            grid-row: 2;
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .ad-box {
+            background-color: #fff;
+            border: 3px outset #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #000080;
+            font-size: 24px;
+            margin: 10px 0 20px 0;
+            text-decoration: underline;
+        }
+        
+        .step {
+            border: 2px inset #808080;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #f0f0f0;
+        }
+        
+        .step-number {
+            font-weight: bold;
+            color: #000080;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .size-selector {
+            margin: 10px 0;
+        }
+        
+        .size-selector label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        select {
+            padding: 3px;
+            border: 2px inset #808080;
+            background-color: #fff;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+        }
+        
+        .matrix-grid {
+            display: inline-grid;
+            gap: 5px;
+            margin: 10px 0;
+            padding: 15px;
+            background-color: #fff;
+            border: 2px inset #808080;
+            justify-items: center;
+            align-items: center;
+        }
+        
+        .matrix-grid input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #808080;
+            text-align: center;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+        }
+        
+        .matrix-label {
+            font-weight: bold;
+            margin: 15px 0 5px 0;
+        }
+        
+        button {
+            background-color: #c0c0c0;
+            border: 2px outset #fff;
+            padding: 8px 20px;
+            margin: 5px 3px;
+            font-family: "Courier New", monospace;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        button:active {
+            border-style: inset;
+        }
+        
+        button:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .operations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .result-box {
+            background-color: #fff;
+            border: 2px inset #808080;
+            padding: 15px;
+            margin: 10px 0;
+            min-height: 80px;
+            font-family: "Courier New", monospace;
+            white-space: pre-wrap;
+            font-size: 13px;
+        }
+        
+        .error {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        
+        hr {
+            border: 1px inset #808080;
+            margin: 20px 0;
+        }
+        
+        .scalar-input {
+            margin: 10px 0;
+        }
+        
+        .scalar-input input {
+            width: 100px;
+            padding: 5px;
+            border: 2px inset #808080;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+        }
+        
+        .footer a {
+            color: #000080;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .page-content {
+            display: none;
+        }
+        
+        .page-content.active {
+            display: block;
+        }
+        
+        .content-page {
+            line-height: 1.6;
+        }
+        
+        .content-page h2 {
+            color: #000080;
+            border-bottom: 2px solid #000080;
+            padding-bottom: 5px;
+        }
+        
+        .content-page h3 {
+            color: #000080;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 900px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+            
+            .main-content {
+                grid-column: 1;
+                grid-row: 1;
+            }
+            
+            .ad-sidebar {
+                grid-column: 1;
+                grid-row: 2;
+            }
+            
+            .footer {
+                grid-column: 1;
+                grid-row: 3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="main-content">
+            <div id="calculator-page" class="page-content active">
+                <h1>*** MATRIX CALCULATOR ***</h1>
+                <p style="text-align: center; margin: -10px 0 20px 0; font-size: 12px; color: #666;">
+                    Press <strong>Ctrl+D</strong> (or <strong>Cmd+D</strong> on Mac) to bookmark this page for later!
+                </p>
+            
+                <div class="step">
+                    <div class="step-number">STEP 1: Choose Matrix Sizes</div>
+                    <p style="margin: 5px 0 15px 0; font-size: 12px;">
+                        Note: Single matrix operations only use Matrix A. Two matrix operations use both A and B.
+                    </p>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>Matrix A Size:</strong>
+                        <div class="size-selector">
+                            <label>Rows:</label>
+                            <select id="rowsA" onchange="createGridA()">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                            
+                            <label style="margin-left: 20px;">Columns:</label>
+                            <select id="colsA" onchange="createGridA()">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <strong>Matrix B Size:</strong>
+                        <div class="size-selector">
+                            <label>Rows:</label>
+                            <select id="rowsB" onchange="createGridB()">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                            
+                            <label style="margin-left: 20px;">Columns:</label>
+                            <select id="colsB" onchange="createGridB()">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">STEP 2: Enter Your Matrix Values</div>
+                    <div class="matrix-label">Matrix A:</div>
+                    <div id="matrixGridA"></div>
+                    
+                    <div class="matrix-label">Matrix B (for A+B, A-B, A×B operations):</div>
+                    <div id="matrixGridB"></div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">STEP 3: Choose Operation</div>
+                    
+                    <strong>Single Matrix Operations:</strong>
+                    <div class="operations">
+                        <button onclick="transpose()">Transpose A</button>
+                        <button onclick="determinant()">Determinant A</button>
+                        <button onclick="inverse()">Inverse A</button>
+                        <button onclick="rank()">Rank A</button>
+                        <button onclick="trace()">Trace A</button>
+                        <button onclick="rref()">RREF A</button>
+                        <button onclick="eigenvalues()">Eigenvalues A</button>
+                    </div>
+                    
+                    <div class="scalar-input">
+                        <label><strong>Scalar Multiply:</strong></label>
+                        <input type="number" id="scalar" value="2" step="any">
+                        <button onclick="scalarMultiply()">Multiply A by Scalar</button>
+                    </div>
+                    
+                    <strong>Two Matrix Operations:</strong>
+                    <div class="operations">
+                        <button onclick="add()">A + B</button>
+                        <button onclick="subtract()">A - B</button>
+                        <button onclick="multiply()">A × B</button>
+                        <button onclick="elementWiseMultiply()">A .* B</button>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="step">
+                    <div class="step-number">RESULT:</div>
+                    <div class="result-box" id="result">Click an operation button to see results...</div>
+                </div>
+            </div>
+            
+            <div id="about-page" class="page-content content-page">
+                <h1>*** ABOUT ***</h1>
+                <h2>About Matrix Calculator</h2>
+                <p>Matrix Calculator is a free online tool designed to help students, engineers, and mathematics enthusiasts perform complex matrix operations quickly and accurately. Whether you're working on homework, verifying calculations, or exploring linear algebra concepts, our calculator provides instant results for all common matrix operations.</p>
+                
+                <h3>Why We Built This</h3>
+                <p>We created this calculator because we noticed that many existing matrix calculators were either too complicated, filled with ads that interfered with usability, or lacked essential features. Our goal was to build a simple, fast, and reliable tool that anyone could use without confusion.</p>
+                
+                <h3>Features</h3>
+                <p>Our calculator supports matrices up to 10x10 and includes operations like addition, subtraction, multiplication, transpose, determinant, inverse, rank, trace, RREF, and eigenvalues. All calculations use the robust math.js library to ensure accuracy.</p>
+            </div>
+            
+            <div id="how-to-page" class="page-content content-page">
+                <h1>*** HOW TO USE ***</h1>
+                <h2>Using the Matrix Calculator</h2>
+                
+                <h3>Step 1: Set Matrix Dimensions</h3>
+                <p>Choose the number of rows and columns for Matrix A and Matrix B using the dropdown menus. You can select any size from 1x1 up to 10x10. Note that Matrix A and Matrix B can have different dimensions.</p>
+                
+                <h3>Step 2: Enter Your Values</h3>
+                <p>Click on each cell in the matrix grid and enter your numbers. The calculator accepts decimals and negative numbers. By default, matrices are filled with identity matrix values (1s on the diagonal, 0s elsewhere) to help you get started.</p>
+                
+                <h3>Step 3: Choose an Operation</h3>
+                <p>Select the operation you want to perform. Single matrix operations (like transpose, determinant, inverse) only use Matrix A. Two matrix operations (like A + B or A × B) use both matrices. For scalar multiplication, enter your scalar value in the input box before clicking the multiply button.</p>
+                
+                <h3>Understanding Results</h3>
+                <p>Results appear in the result box at the bottom. Matrix results show all values to 4 decimal places for precision. If an operation cannot be performed (like trying to find the inverse of a singular matrix), an error message will explain the issue.</p>
+                
+                <h3>Common Operations Explained</h3>
+                <p><strong>Transpose:</strong> Flips a matrix over its diagonal, swapping rows and columns.</p>
+                <p><strong>Determinant:</strong> A scalar value that can be computed from a square matrix. Only works on square matrices.</p>
+                <p><strong>Inverse:</strong> The matrix that, when multiplied by the original, gives the identity matrix. Only exists for non-singular square matrices.</p>
+                <p><strong>Rank:</strong> The dimension of the vector space spanned by the matrix's rows or columns.</p>
+                <p><strong>RREF:</strong> Reduced Row Echelon Form, useful for solving systems of linear equations.</p>
+            </div>
+            
+            <div id="privacy-page" class="page-content content-page">
+                <h1>*** PRIVACY POLICY ***</h1>
+                <h2>Privacy Policy</h2>
+                <p><strong>Last Updated: January 2026</strong></p>
+                
+                <h3>Information We Collect</h3>
+                <p>This website uses Google AdSense to display advertisements. When you visit our site, Google may collect certain information about your visit through cookies and similar technologies. This may include your IP address, browser type, pages visited, and time spent on pages.</p>
+                
+                <h3>How We Use Your Information</h3>
+                <p>We do not directly collect or store any personal information. The matrix values you enter into the calculator are processed entirely in your browser and are never sent to our servers or stored anywhere. Google AdSense uses the information it collects to display relevant advertisements and measure ad performance.</p>
+                
+                <h3>Cookies</h3>
+                <p>Google AdSense uses cookies to serve ads based on your prior visits to this website and other websites. You may opt out of personalized advertising by visiting Google's Ads Settings at https://www.google.com/settings/ads.</p>
+                
+                <h3>Third-Party Services</h3>
+                <p>This site uses Google AdSense for advertising. Google's use of advertising cookies enables it and its partners to serve ads based on your visits to this site and other sites on the Internet. For more information about Google's privacy practices, visit https://policies.google.com/privacy.</p>
+                
+                <h3>Your Rights</h3>
+                <p>You have the right to disable cookies in your browser settings. However, this may affect your ability to use certain features of this website and may prevent ads from displaying properly.</p>
+                
+                <h3>Changes to This Policy</h3>
+                <p>We may update this privacy policy from time to time. Any changes will be posted on this page with an updated revision date.</p>
+                
+                <h3>Contact</h3>
+                <p>If you have questions about this privacy policy, please contact us using the contact page.</p>
+            </div>
+            
+            <div id="contact-page" class="page-content content-page">
+                <h1>*** CONTACT ***</h1>
+                <h2>Contact Us</h2>
+                <p>We'd love to hear from you! Whether you have questions, feedback, or suggestions for improving the Matrix Calculator, please don't hesitate to reach out.</p>
+                
+                <h3>Get In Touch</h3>
+                <p><strong>Email:</strong> contact@matrixcalculator.com</p>
+                <p>(Replace with your actual email address once you set one up)</p>
+                
+                <h3>Feedback & Suggestions</h3>
+                <p>If you've found a bug, have an idea for a new feature, or want to suggest improvements, we're all ears. Your feedback helps us make this calculator better for everyone.</p>
+                
+                <h3>Bug Reports</h3>
+                <p>If you encounter any errors or unexpected behavior, please let us know what operation you were performing and what values you entered. This helps us diagnose and fix issues quickly.</p>
+                
+                <h3>Response Time</h3>
+                <p>We typically respond to inquiries within 24-48 hours during business days.</p>
+            </div>
+        </div>
+        
+        <aside class="ad-sidebar">
+            <div class="ad-box">
+                <div>
+                    <strong>GOOGLE ADSENSE</strong><br>
+                    Ad Block 300x250<br><br>
+                    <!-- Replace this with your AdSense code -->
+                </div>
+            </div>
+            
+            <div class="ad-box">
+                <div>
+                    <strong>GOOGLE ADSENSE</strong><br>
+                    Ad Block 300x250<br><br>
+                    <!-- Replace this with your AdSense code -->
+                </div>
+            </div>
+            
+            <div class="ad-box">
+                <div>
+                    <strong>GOOGLE ADSENSE</strong><br>
+                    Ad Block 300x600<br><br>
+                    <!-- Replace this with your AdSense code -->
+                </div>
+            </div>
+        </aside>
+        
+        <div class="footer">
+            <hr>
+            <div style="margin-bottom: 10px;">
+                <a href="#" onclick="showPage('calculator'); return false;">Calculator</a> | 
+                <a href="#" onclick="showPage('about'); return false;">About</a> | 
+                <a href="#" onclick="showPage('how-to'); return false;">How to Use</a> | 
+                <a href="#" onclick="showPage('privacy'); return false;">Privacy Policy</a> | 
+                <a href="#" onclick="showPage('contact'); return false;">Contact</a>
+            </div>
+            Matrix Calculator v1.0 | Powered by math.js
+        </div>
+    </div>
+    
+    <script>
+        function createGrid() {
+            createGridA();
+            createGridB();
+        }
+        
+        function createGridA() {
+            const rows = parseInt(document.getElementById('rowsA').value);
+            const cols = parseInt(document.getElementById('colsA').value);
+            createMatrixGrid('A', rows, cols);
+        }
+        
+        function createGridB() {
+            const rows = parseInt(document.getElementById('rowsB').value);
+            const cols = parseInt(document.getElementById('colsB').value);
+            createMatrixGrid('B', rows, cols);
+        }
+        
+        function createMatrixGrid(name, rows, cols) {
+            const container = document.getElementById('matrixGrid' + name);
+            container.innerHTML = '';
+            
+            const grid = document.createElement('div');
+            grid.className = 'matrix-grid';
+            grid.style.gridTemplateColumns = `repeat(${cols}, 60px)`;
+            
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.value = (i === j) ? '1' : '0';
+                    input.id = `${name}_${i}_${j}`;
+                    input.step = 'any';
+                    grid.appendChild(input);
+                }
+            }
+            
+            container.appendChild(grid);
+        }
+        
+        function getMatrixFromGrid(name) {
+            const rows = parseInt(document.getElementById('rows' + name).value);
+            const cols = parseInt(document.getElementById('cols' + name).value);
+            const matrix = [];
+            
+            for (let i = 0; i < rows; i++) {
+                const row = [];
+                for (let j = 0; j < cols; j++) {
+                    const val = parseFloat(document.getElementById(`${name}_${i}_${j}`).value);
+                    row.push(val);
+                }
+                matrix.push(row);
+            }
+            
+            return matrix;
+        }
+        
+        function displayMatrix(matrix) {
+            if (typeof matrix === 'number') {
+                return matrix.toFixed(4);
+            }
+            if (Array.isArray(matrix) && typeof matrix[0] === 'number') {
+                return '[' + matrix.map(v => v.toFixed(4)).join(', ') + ']';
+            }
+            return matrix.map(row => 
+                '[' + row.map(v => (typeof v === 'number' ? v.toFixed(4) : v)).join(', ') + ']'
+            ).join('\n');
+        }
+        
+        function showResult(result) {
+            document.getElementById('result').textContent = result;
+            document.getElementById('result').className = 'result-box';
+        }
+        
+        function showError(error) {
+            document.getElementById('result').textContent = 'ERROR: ' + error;
+            document.getElementById('result').className = 'result-box error';
+        }
+        
+        function transpose() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const result = math.transpose(A);
+                showResult('Transpose of A:\n\n' + displayMatrix(result));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function determinant() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const result = math.det(A);
+                showResult('Determinant of A:\n\n' + result.toFixed(6));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function inverse() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const result = math.inv(A);
+                showResult('Inverse of A:\n\n' + displayMatrix(result));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function rank() {
+            try {
+                const A = getMatrixFromGrid('A');
+                let rref = calculateRREF(A);
+                let r = 0;
+                
+                for (let i = 0; i < rref.length; i++) {
+                    if (rref[i].some(val => Math.abs(val) > 1e-10)) {
+                        r++;
+                    }
+                }
+                
+                showResult('Rank of A:\n\n' + r);
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function trace() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const result = math.trace(A);
+                showResult('Trace of A:\n\n' + result.toFixed(6));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function calculateRREF(matrix) {
+            let m = matrix.map(row => [...row]);
+            let rows = m.length;
+            let cols = m[0].length;
+            let lead = 0;
+            
+            for (let r = 0; r < rows; r++) {
+                if (lead >= cols) return m;
+                
+                let i = r;
+                while (Math.abs(m[i][lead]) < 1e-10) {
+                    i++;
+                    if (i === rows) {
+                        i = r;
+                        lead++;
+                        if (lead === cols) return m;
+                    }
+                }
+                
+                [m[i], m[r]] = [m[r], m[i]];
+                
+                let val = m[r][lead];
+                for (let j = 0; j < cols; j++) {
+                    m[r][j] /= val;
+                }
+                
+                for (let i = 0; i < rows; i++) {
+                    if (i !== r) {
+                        val = m[i][lead];
+                        for (let j = 0; j < cols; j++) {
+                            m[i][j] -= val * m[r][j];
+                        }
+                    }
+                }
+                lead++;
+            }
+            return m;
+        }
+        
+        function rref() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const result = calculateRREF(A);
+                showResult('Reduced Row Echelon Form of A:\n\n' + displayMatrix(result));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function eigenvalues() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const result = math.eigs(A);
+                showResult('Eigenvalues of A:\n\n' + displayMatrix(result.values));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function scalarMultiply() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const scalar = parseFloat(document.getElementById('scalar').value);
+                const result = math.multiply(scalar, A);
+                showResult('Scalar × A:\n\n' + displayMatrix(result));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function add() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const B = getMatrixFromGrid('B');
+                const result = math.add(A, B);
+                showResult('A + B:\n\n' + displayMatrix(result));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function subtract() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const B = getMatrixFromGrid('B');
+                const result = math.subtract(A, B);
+                showResult('A - B:\n\n' + displayMatrix(result));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function multiply() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const B = getMatrixFromGrid('B');
+                const result = math.multiply(A, B);
+                showResult('A × B:\n\n' + displayMatrix(result));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function elementWiseMultiply() {
+            try {
+                const A = getMatrixFromGrid('A');
+                const B = getMatrixFromGrid('B');
+                const result = math.dotMultiply(A, B);
+                showResult('A .* B (element-wise):\n\n' + displayMatrix(result));
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+        
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.getElementById(pageId + '-page').classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        
+        window.onload = function() {
+            createGrid();
+        };
+    </script>
+</body>
+</html>
